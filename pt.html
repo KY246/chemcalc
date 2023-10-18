@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      *{
+        color: #ddd;
+        background: #333;
+        box-sizing: border-box;
+      }
+      #in{
+        font-family: serif;
+        font-size: 20px;
+        width: calc(50vw - 15px);
+        height: calc(100vh - 20px);
+        
+        position: fixed;
+        left: 10px;
+        top: 10px;
+        
+        line-height: 30px;
+        padding-left: 20px;
+        padding-top: 10px;
+      }
+      #out{
+        font-family: monospace;
+        font-size: 20px;
+        width: calc(50vw - 15px);
+        height: calc(100vh - 100px);
+        
+        border: 1px solid #999;
+        margin: 0px;
+        
+        position: fixed;
+        right: 10px;
+        top: 10px;
+        
+        line-height: 30px;
+        padding-left: 20px;
+        padding-top: 10px;
+      }
+      #run{
+        font-family: monospace;
+        font-size: 20px;
+        width: calc(50vw - 20px);
+        height: 60px;
+        line-height: 60px;
+        text-align: center;
+        
+        border-radius: 10px;
+        margin: 0px;
+        
+        position: fixed;
+        right: 10px;
+        bottom: 15px;
+        
+        cursor: pointer;
+        
+        background: linear-gradient(45deg, #f40, #f0f);
+        color: #000;
+      }
+    </style>
+  </head>
+  <body>
+    <textarea id="in" placeholder="Enter Code here"></textarea>
+    <pre id="out"></pre>
+    <div id="run">Run</div>
+    <script>
+      const pt_defined_in = document.getElementById("in");
+      const pt_defined_out = document.getElementById("out");
+      const pt_defined_run = document.getElementById("run");
+      const pt_defined_elements = [
+        "H", "Hydrogen", 1.00797,
+        "He", "Helium", 4.00260,
+        "Li", "Lithium", 6.941,
+        "Be", "Beryllium", 9.01218,
+        "B", "Boron", 10.81,
+        "C", "Carbon", 12.011,
+        "N", "Nitrogen", 14.0067,
+        "O", "Oxygen", 15.9994,
+        "F", "Fluorine", 18.998403,
+        "Ne", "Neon", 20.179,
+        "Na", "Sodium", 22.98977,
+        "Mg", "Magnesium", 24.305,
+        "Al", "Aluminum", 26.98154,
+        "Si", "Silicon", 28.0855,
+        "P", "Phosphorus", 30.97376,
+        "S", "Sulfur", 32.06,
+        "Cl", "Chlorine", 35.453,
+        "K", "Potassium", 39.0983,
+        "Ar", "Argon", 39.948,
+        "Ca", "Calcium", 40.08,
+        "Sc", "Scandium", 44.9559,
+        "Ti", "Titanium", 47.90,
+        "V", "Vanadium", 50.9415,
+        "Cr", "Chromium", 51.996,
+        "Mn", "Manganese", 54.9380,
+        "Fe", "Iron", 55.847,
+        "Ni", "Nickel", 58.70,
+        "Co", "Cobalt", 58.9332,
+        "Cu", "Copper", 63.546,
+        "Zn", "Zinc", 65.38,
+        "Ga", "Gallium", 69.72,
+        "Ge", "Germanium", 72.59,
+        "As", "Arsenic", 74.9216,
+        "Se", "Selenium", 78.96,
+        "Br", "Bromine", 79.904,
+        "Kr", "Krypton", 83.80,
+        "Rb", "Rubidium", 85.4678,
+        "Sr", "Strontium", 87.62,
+        "Y", "Yttrium", 88.9059,
+        "Zr", "Zirconium", 91.22,
+        "Nb", "Niobium", 92.9064,
+        "Mo", "Molybdenum", 95.94,
+        "Tc", "Technetium", 98,
+        "Ru", "Ruthenium", 101.07,
+        "Rh", "Rhodium", 102.9055,
+        "Pd", "Palladium", 106.4,
+        "Ag", "Silver", 107.868,
+        "Cd", "Cadmium", 112.41,
+        "In", "Indium", 114.82,
+        "Sn", "Tin", 118.69,
+        "Sb", "Antimony", 121.75,
+        "I", "Iodine", 126.9045,
+        "Te", "Tellurium", 127.60,
+        "Xe", "Xenon", 131.30,
+        "Cs", "Cesium", 132.9054,
+        "Ba", "Barium", 137.33,
+        "La", "Lanthanum", 138.9055,
+        "Ce", "Cerium", 140.12,
+        "Pr", "Praseodymium", 140.9077,
+        "Nd", "Neodymium", 144.24,
+        "Pm", "Promethium", 145,
+        "Sm", "Samarium", 150.4,
+        "Eu", "Europium", 151.96,
+        "Gd", "Gadolinium", 157.25,
+        "Tb", "Terbium", 158.9254,
+        "Dy", "Dysprosium", 162.50,
+        "Ho", "Holmium", 164.9304,
+        "Er", "Erbium", 167.26,
+        "Tm", "Thulium", 168.9342,
+        "Yb", "Ytterbium", 173.04,
+        "Lu", "Lutetium", 174.967,
+        "Hf", "Hafnium", 178.49,
+        "Ta", "Tantalum", 180.9479,
+        "W", "Tungsten", 183.85,
+        "Re", "Rhenium", 186.207,
+        "Os", "Osmium", 190.2,
+        "Ir", "Iridium", 192.22,
+        "Pt", "Platinum", 195.09,
+        "Au", "Gold", 196.9665,
+        "Hg", "Mercury", 200.59,
+        "Tl", "Thallium", 204.37,
+        "Pb", "Lead", 207.2,
+        "Bi", "Bismuth", 208.9804,
+        "Po", "Polonium", 209,
+        "At", "Astatine", 210,
+        "Rn", "Radon", 222,
+        "Fr", "Francium", 223,
+        "Ra", "Radium", 226.0254,
+        "Ac", "Actinium", 227.0278,
+        "Pa", "Protactinium", 231.0359,
+        "Th", "Thorium", 232.0381,
+        "Np", "Neptunium", 237.0482,
+        "U", "Uranium", 238.029,
+        "mol", "Mole", 6.02214076e23
+      ];
+      
+      pt_defined_log = (val = "", err) => {
+        if(err)
+          pt_defined_out.innerHTML += `<span style="color: #f00;">${val}</span>\n`;
+        else
+          pt_defined_out.innerHTML += val + "\n";
+      };
+      
+      pt_defined_run.onclick = e => {
+        pt_defined_out.innerHTML = "";
+        let pt_defined_val = pt_defined_in.value;
+        pt_defined_val = pt_defined_val.replace(/(^\s+|;?\s+$)/g, "");
+        pt_defined_val = pt_defined_val.split("\n").map(_ => `pt_defined_log(${_})`).join("\n");
+        pt_defined_val = pt_defined_val.replace(/\^/g, "**");
+        pt_defined_val = pt_defined_val.replace(/([^a-z])xor([^a-z])/gi, (...e) => e[1] + "^" + e[2]);
+        pt_defined_val = pt_defined_val.replace(/(\d+)([a-zA-Z\(]+)/g, (...e) => e[1] + " * " + e[2]);
+        for(let i = 0; i < pt_defined_elements.length; i+=3){
+          let pt_defined_pre = pt_defined_val;
+          pt_defined_val = pt_defined_val.replace(new RegExp(`(\\W)${pt_defined_elements[i]}(\\W)`, ""), (...e) => e[1] + pt_defined_elements[i + 2] + e[2]);
+          pt_defined_val = pt_defined_val.replace(new RegExp(`(\\W)${pt_defined_elements[i + 1]}(\\W)`, "i"), (...e) => e[1] + pt_defined_elements[i + 2] + e[2]);
+          if(pt_defined_val != pt_defined_pre){
+            i -= 3;
+          }
+        }
+        console.log(pt_defined_val);
+        try{
+          eval(pt_defined_val);
+        }catch(e){
+          pt_defined_log(e, 1);
+          throw e;
+        }
+      };
+    </script>
+  </body>
+</html>
